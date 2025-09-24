@@ -26,16 +26,18 @@ function totalHours(week){
 function showWeeks(){
   const totalWeek1 = totalHours('week1');
   const totalWeek2 = totalHours('week2');
-  app.innerHTML=`<div class="center">
-    <div>Total Hours Combined: ${totalWeek1+totalWeek2}</div>
-    <button class="week-btn" id="week1Btn">Week 1\n(${totalWeek1} hrs)</button>
-    <button class="week-btn" id="week2Btn">Week 2\n(${totalWeek2} hrs)</button>
-    <button id="doneWeeks">Done</button>
-  </div>`;
+  app.innerHTML = `
+    <div class="center">
+      <button class="week-btn" id="week1Btn">Week 1<br>(${totalWeek1} hrs)</button>
+      <button class="week-btn" id="week2Btn">Week 2<br>(${totalWeek2} hrs)</button>
+      <button id="doneWeeks">Done</button>
+    </div>`;
 
-  document.getElementById('week1Btn').onclick=()=>showGrid('week1');
-  document.getElementById('week2Btn').onclick=()=>showGrid('week2');
-  document.getElementById('doneWeeks').onclick=showStart;
+  document.getElementById('week1Btn').onclick = () => showGrid('week1');
+  document.getElementById('week2Btn').onclick = () => showGrid('week2');
+
+  // Fix Done button to return to home screen
+  document.getElementById('doneWeeks').onclick = showStart;
 }
 
 function showGrid(week){
@@ -44,7 +46,7 @@ function showGrid(week){
   for(const d of days){
     const dayData = timesheets[week]&&timesheets[week][d]? timesheets[week][d]: {hoursCustomer:0, hoursCg:0};
     const dayHours = (dayData.hoursCustomer || 0) + (dayData.hoursCg || 0);
-    gridHTML+=`<div class="day-btn" data-day="${d}">${d}\n(Customer: ${dayData.hoursCustomer || 0}h, CGYAIR: ${dayData.hoursCg || 0}h, Total: ${dayHours}h)</div>`;
+    gridHTML+=`<div class="day-btn" data-day="${d}">${d}<br>(Customer: ${dayData.hoursCustomer || 0}h, CGYAIR: ${dayData.hoursCg || 0}h, Total: ${dayHours}h)</div>`;
   }
   gridHTML+='</div><div class="center"><button id="exportPdf">Export PDF</button><button id="backWeeks">Back</button></div>';
   app.innerHTML=gridHTML;
@@ -131,6 +133,9 @@ document.getElementById('viewLogs').onclick=()=>{
 };
 
 function showLogs(){
+  // Reload from localStorage to persist data after refresh
+  timesheets = JSON.parse(localStorage.getItem('weeklyTimesheets') || '{}');
+
   const logsMonths = document.getElementById('logsMonths');
   const logsList = document.getElementById('logsList');
   logsMonths.innerHTML='';
