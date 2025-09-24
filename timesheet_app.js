@@ -35,8 +35,6 @@ function showWeeks(){
 
   document.getElementById('week1Btn').onclick=()=>showGrid('week1');
   document.getElementById('week2Btn').onclick=()=>showGrid('week2');
-
-  // Fix Done button to go back to home screen
   document.getElementById('doneWeeks').onclick=showStart;
 }
 
@@ -44,8 +42,9 @@ function showGrid(week){
   currentWeek = week;
   let gridHTML = '<div class="grid">';
   for(const d of days){
-    const dayHours = timesheets[week]&&timesheets[week][d]? timesheets[week][d].hoursCustomer+timesheets[week][d].hoursCg:0;
-    gridHTML+=`<div class="day-btn" data-day="${d}">${d}\n(${dayHours} hrs)</div>`;
+    const dayData = timesheets[week]&&timesheets[week][d]? timesheets[week][d]: {hoursCustomer:0, hoursCg:0};
+    const dayHours = (dayData.hoursCustomer || 0) + (dayData.hoursCg || 0);
+    gridHTML+=`<div class="day-btn" data-day="${d}">${d}\n(Customer: ${dayData.hoursCustomer || 0}h, CGYAIR: ${dayData.hoursCg || 0}h, Total: ${dayHours}h)</div>`;
   }
   gridHTML+='</div><div class="center"><button id="exportPdf">Export PDF</button><button id="backWeeks">Back</button></div>';
   app.innerHTML=gridHTML;
@@ -75,7 +74,6 @@ function editDay(day){
 
 document.getElementById('backBtn').onclick=()=>{overlay.style.display='none';};
 
-// Save day and refresh grid so button text updates
 document.getElementById('saveDay').onclick=()=>{
   if(!timesheets[currentWeek]) timesheets[currentWeek]={};
   timesheets[currentWeek][currentDay]={
@@ -90,8 +88,9 @@ document.getElementById('saveDay').onclick=()=>{
   };
   saveStorage();
   overlay.style.display='none';
+  // Re-render grid to immediately update button text with new hours
   showGrid(currentWeek);
-}
+};
 
 function exportPDF(week){
   const { jsPDF } = window.jspdf;
