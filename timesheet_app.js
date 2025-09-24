@@ -32,8 +32,11 @@ function showWeeks(){
     <button class="week-btn" id="week2Btn">Week 2\n(${totalWeek2} hrs)</button>
     <button id="doneWeeks">Done</button>
   </div>`;
+
   document.getElementById('week1Btn').onclick=()=>showGrid('week1');
   document.getElementById('week2Btn').onclick=()=>showGrid('week2');
+
+  // Fix Done button to go back to home screen
   document.getElementById('doneWeeks').onclick=showStart;
 }
 
@@ -72,6 +75,7 @@ function editDay(day){
 
 document.getElementById('backBtn').onclick=()=>{overlay.style.display='none';};
 
+// Save day and refresh grid so button text updates
 document.getElementById('saveDay').onclick=()=>{
   if(!timesheets[currentWeek]) timesheets[currentWeek]={};
   timesheets[currentWeek][currentDay]={
@@ -87,7 +91,7 @@ document.getElementById('saveDay').onclick=()=>{
   saveStorage();
   overlay.style.display='none';
   showGrid(currentWeek);
-};
+}
 
 function exportPDF(week){
   const { jsPDF } = window.jspdf;
@@ -132,6 +136,14 @@ function showLogs(){
   const logsList = document.getElementById('logsList');
   logsMonths.innerHTML='';
   logsList.innerHTML='';
+
+  // Add Back button to logs page
+  const backBtn = document.createElement('button');
+  backBtn.textContent='Back';
+  backBtn.style.margin='10px';
+  backBtn.onclick=showStart;
+  logsMonths.appendChild(backBtn);
+
   const months = {};
   Object.keys(timesheets).forEach(week=>{
     Object.values(timesheets[week]).forEach(entry=>{
